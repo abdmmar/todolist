@@ -53,34 +53,6 @@
 <!--                android:layout_width="wrap_content"-->
 <!--                android:layout_height="wrap_content"-->
 <!--                android:layout_weight="1"-->
-<!--                android:buttonTint="#238EF1"-->
-<!--                android:checked="true"-->
-<!--                android:text="Pengajuan Tema"-->
-<!--                android:textColor="#238EF1" />-->
-
-<!--            <ImageButton-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:background="@drawable/ic_more"-->
-<!--                android:contentDescription="More option"-->
-<!--                android:onClick="showPopup"-->
-<!--                android:padding="5dp"-->
-<!--                android:src="@drawable/ic_more" />-->
-
-<!--        </LinearLayout>-->
-
-<!--        <LinearLayout-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_gravity="center_vertical"-->
-<!--            android:layout_marginBottom="10dp"-->
-<!--            android:gravity="center_vertical"-->
-<!--            android:orientation="horizontal">-->
-
-<!--            <CheckBox-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_weight="1"-->
 <!--                android:buttonTint="#282828"-->
 <!--                android:checked="false"-->
 <!--                android:text="Pengajuan Tema"-->
@@ -107,8 +79,7 @@
         android:layout_below="@+id/layout_list_container"
         android:layout_alignParentStart="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="20dp" />
+        android:layout_marginBottom="10dp" />
 
     <LinearLayout
         android:id="@+id/ll_add_component"
