@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class MainActivity extends BaseActivity implements PopupMenu.OnMenuItemClickListener {
+public class MainActivity extends BaseActivity{
 
     private static final String TAG = "Todo List App";
     private RecyclerView recyclerView;
@@ -57,28 +57,6 @@ public class MainActivity extends BaseActivity implements PopupMenu.OnMenuItemCl
         Todo t2 = new Todo(2, "Read Books", "13-12-2020", false);
 
         todoList.addAll(Arrays.asList(t0, t1, t2));
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.Q)
-    public void showPopup(View view) {
-        PopupMenu popup = new PopupMenu(this, view);
-        popup.setOnMenuItemClickListener(this);
-        popup.inflate(R.menu.actions);
-        popup.show();
-    }
-
-    @Override
-    public boolean onMenuItemClick(MenuItem menuItem) {
-        switch (menuItem.getItemId()) {
-            case R.id.item_edit:
-                Toast.makeText(this, "Edit Pressed", Toast.LENGTH_SHORT).show();
-                return true;
-            case R.id.item_delete:
-                Toast.makeText(this, "Delete Pressed", Toast.LENGTH_SHORT).show();
-                return true;
-            default:
-                return false;
-        }
     }
 
     public void swiping(View view){
