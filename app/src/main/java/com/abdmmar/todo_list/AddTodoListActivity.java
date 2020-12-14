@@ -17,7 +17,7 @@ import android.widget.Toast;
 import java.text.DateFormat;
 import java.util.Calendar;
 
-public class AddTodoListActivity extends BaseActivity {
+public class AddTodoListActivity extends BaseActivity implements View.OnClickListener {
     private DatePicker datePicker;
     private Calendar calendar;
     private TextView tv_choosen_date;
@@ -40,17 +40,7 @@ public class AddTodoListActivity extends BaseActivity {
         View view = findViewById(R.id.add_todo_view);
         tv_choosen_date.setText(DateFormat.getDateInstance(DateFormat.MEDIUM).format(calendar.getTime()));
 
-        imgbtn_choose_date.setOnClickListener(new View.OnClickListener(){
-
-            @Override
-            public void onClick(View view) {
-                DatePickerDialog datePickerDialog = new DatePickerDialog(
-                        AddTodoListActivity.this,
-                        android.R.style.Theme_DeviceDefault_Dialog_MinWidth,
-                        setDateListener, year, month, day);
-                datePickerDialog.show();
-            }
-        });
+        imgbtn_choose_date.setOnClickListener(this);
 
         setDateListener = new DatePickerDialog.OnDateSetListener() {
             @Override
@@ -65,6 +55,18 @@ public class AddTodoListActivity extends BaseActivity {
         };
 
         swiping(view);
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.imgbtn_choose_date:
+                DatePickerDialog datePickerDialog = new DatePickerDialog(
+                        AddTodoListActivity.this,
+                        android.R.style.Theme_DeviceDefault_Dialog_MinWidth,
+                        setDateListener, year, month, day);
+                datePickerDialog.show();
+        }
     }
 
     public void swiping(View view){
