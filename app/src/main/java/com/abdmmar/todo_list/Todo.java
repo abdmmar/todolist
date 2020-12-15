@@ -1,32 +1,32 @@
 package com.abdmmar.todo_list;
 
 public class Todo {
-    private int id_list;
-    private String name_todo;
+    private int todoId;
+    private String title;
     private String date;
     private boolean checked;
 
-    public Todo(int id_list, String name_todo, String date, boolean checked) {
-        this.id_list = id_list;
-        this.name_todo = name_todo;
+    public Todo(int todoId, String title, String date, boolean checked) {
+        this.todoId = todoId;
+        this.title = title;
         this.date = date;
         this.checked = checked;
     }
 
-    public int getId_list() {
-        return id_list;
+    public int getTodoId() {
+        return todoId;
     }
 
-    public void setId_list(int id_list) {
-        this.id_list = id_list;
+    public void setTodoId(int todoId) {
+        this.todoId = todoId;
     }
 
-    public String getName_todo() {
-        return name_todo;
+    public String getTitle() {
+        return title;
     }
 
-    public void setName_todo(String name_todo) {
-        this.name_todo = name_todo;
+    public void setTitle(String title) {
+        this.title = this.title;
     }
 
     public String getDate() {
@@ -48,8 +48,8 @@ public class Todo {
     @Override
     public String toString() {
         return "Todo{" +
-                "id_list=" + id_list +
-                ", name_todo='" + name_todo + '\'' +
+                "id_list=" + todoId +
+                ", name_todo='" + title + '\'' +
                 ", date='" + date + '\'' +
                 ", checked=" + checked +
                 '}';

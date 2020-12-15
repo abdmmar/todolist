@@ -1,21 +1,22 @@
 package com.abdmmar.todo_list;
 
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.DatePickerDialog;
-import android.app.Dialog;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 public class AddTodoListActivity extends BaseActivity implements View.OnClickListener {
     private DatePicker datePicker;
@@ -23,8 +24,18 @@ public class AddTodoListActivity extends BaseActivity implements View.OnClickLis
     private TextView tv_choosen_date;
     private int year, month, day;
     private String choosenDate;
-    private ImageButton imgbtn_choose_date;
+    private int todoId = 1;
+    private ImageButton imgbtn_choose_date,
+            imgbtn_addUpcomingTodo,
+            imgbtn_submitTodoList;
+    private EditText et_addtodo;
+    private RecyclerView recyclerView;
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager layoutManager;
+
+    List<Todo> upcomingTodoList = new ArrayList<>();
     DatePickerDialog.OnDateSetListener setDateListener;
+    DatabaseHelper databaseHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,15 +44,30 @@ public class AddTodoListActivity extends BaseActivity implements View.OnClickLis
 
         tv_choosen_date = findViewById(R.id.tv_choosen_date);
         imgbtn_choose_date = findViewById(R.id.imgbtn_choose_date);
+        imgbtn_addUpcomingTodo = findViewById(R.id.imgbtn_addUpcomingTodo);
+        imgbtn_submitTodoList = findViewById(R.id.imgbtn_submitTodoList);
+        et_addtodo = findViewById(R.id.et_addUpcomingTodo);
+        recyclerView = findViewById(R.id.lv_todayTodoList);
+        View view = findViewById(R.id.add_todo_view);
+
+        //Calendar
         calendar = Calendar.getInstance();
         year = calendar.get(Calendar.YEAR);
         month = calendar.get(Calendar.MONTH);
         day = calendar.get(Calendar.DAY_OF_MONTH);
-        View view = findViewById(R.id.add_todo_view);
-        tv_choosen_date.setText(DateFormat.getDateInstance(DateFormat.MEDIUM).format(calendar.getTime()));
+        choosenDate = year+"-"+(month+1)+"-"+day;
 
+        //Set Date
+        tv_choosen_date.setText(DateFormat
+                .getDateInstance(DateFormat.MEDIUM)
+                .format(calendar.getTime()));
+
+        //Button onCLick
         imgbtn_choose_date.setOnClickListener(this);
+        imgbtn_addUpcomingTodo.setOnClickListener(this);
+        imgbtn_submitTodoList.setOnClickListener(this);
 
+        //Calendar SetDate
         setDateListener = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
@@ -49,12 +75,23 @@ public class AddTodoListActivity extends BaseActivity implements View.OnClickLis
                 calendar.set(Calendar.YEAR, year);
                 calendar.set(Calendar.MONTH, month);
                 calendar.set(Calendar.DAY_OF_MONTH, day);
-                choosenDate = day+"-"+month+1+"-"+year;
+                choosenDate = year+"-"+(month+1)+"-"+day;
+                Toast.makeText(AddTodoListActivity.this, choosenDate, Toast.LENGTH_SHORT).show();
                 tv_choosen_date.setText(DateFormat.getDateInstance(DateFormat.MEDIUM).format(calendar.getTime()));
             }
         };
 
+        recyclerView.setHasFixedSize(true);
+        layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+        showAddedUpcomingTodoList();
+
         swiping(view);
+    }
+
+    private void showAddedUpcomingTodoList() {
+        mAdapter = new TodoAdapter(upcomingTodoList,  this);
+        recyclerView.setAdapter(mAdapter);
     }
 
     @Override
@@ -65,7 +102,29 @@ public class AddTodoListActivity extends BaseActivity implements View.OnClickLis
                         AddTodoListActivity.this,
                         android.R.style.Theme_DeviceDefault_Dialog_MinWidth,
                         setDateListener, year, month, day);
+                datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis()+24*60*60*1000);
                 datePickerDialog.show();
+                break;
+            case R.id.imgbtn_addUpcomingTodo:
+                String getTitle = et_addtodo.getText().toString();
+
+                Todo upcomingTodo = new Todo(todoId, getTitle, choosenDate, false);
+                upcomingTodoList.add(upcomingTodo);
+                et_addtodo.setText("");
+                todoId++;
+                showAddedUpcomingTodoList();
+                break;
+            case R.id.imgbtn_submitTodoList:
+                boolean success = true;
+                databaseHelper = new DatabaseHelper(AddTodoListActivity.this,
+                        "todolist.db", 1);
+                for(Todo todoList : upcomingTodoList){
+                    todoList.setDate(choosenDate);
+                    success = databaseHelper.addTodo(todoList);
+                }
+                upcomingTodoList.clear();
+                Toast.makeText(this, ""+success, Toast.LENGTH_SHORT).show();
+                break;
         }
     }
 

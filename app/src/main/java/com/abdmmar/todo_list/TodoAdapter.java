@@ -20,6 +20,8 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.MyViewHolder> 
 
     List<Todo> todoList;
     Context context;
+    private boolean isUndeleted = false;
+    DatabaseHelper databaseHelper;
 
     public TodoAdapter(List<Todo> todoList, Context context) {
         this.todoList = todoList;
@@ -37,7 +39,7 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.MyViewHolder> 
 
     @Override
     public void onBindViewHolder(@NonNull final MyViewHolder holder, final int position) {
-        holder.c_item.setText(todoList.get(position).getName_todo());
+        holder.c_item.setText(todoList.get(position).getTitle());
 
         holder.imgbtn_moreOption.setOnClickListener(moreOption(position));
     }
@@ -64,12 +66,22 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.MyViewHolder> 
         return new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
+                databaseHelper = new DatabaseHelper(context,
+                        "todolist.db", 1);
                 switch (item.getItemId()) {
                     case R.id.item_edit:
-                        Toast.makeText(context, "Edit item with id: " + todoList.get(position).getId_list(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "Edit item with id: " + todoList.get(position).getTodoId(), Toast.LENGTH_SHORT).show();
                         return true;
                     case R.id.item_delete:
-                        Toast.makeText(context, "Delete item with id: " + todoList.get(position).getId_list(), Toast.LENGTH_SHORT).show();
+                        isUndeleted = databaseHelper.deleteTodoItem(todoList.get(position));
+                        if (!isUndeleted){
+                            todoList.remove(todoList.get(position));
+                            notifyItemRemoved(position);
+                            notifyItemRangeChanged(position, todoList.size());
+                            Toast.makeText(context, "Item deleted", Toast.LENGTH_SHORT).show();
+                        } else{
+                            Toast.makeText(context, "Item undeleted", Toast.LENGTH_SHORT).show();
+                        }
                         return true;
                     default:
                         return false;

@@ -25,38 +25,31 @@ public class MainActivity extends BaseActivity{
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
     List<Todo> todoList = new ArrayList<>();
+    DatabaseHelper databaseHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        fillTodoList();
-        Log.d(TAG, "onCreate: " + todoList.toString());
         recyclerView = findViewById(R.id.lv_todo_list);
+
         View view = findViewById(R.id.main_view);
-        swiping(view);
+        databaseHelper = new DatabaseHelper(MainActivity.this,
+                "todolist.db", 1);
+        todoList = databaseHelper.getTodayTodo();
 
-        // use this setting to improve performance if you know that changes
-        // in content do not change the layout size of the RecyclerView
         recyclerView.setHasFixedSize(true);
-
-        // use a linear layout manager
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
+        showTodayTodoList();
 
-        // specify an adapter (see also next example)
-        mAdapter = new TodoAdapter(todoList,  this);
-        recyclerView.setAdapter(mAdapter);
-
+        swiping(view);
     }
 
-    private void fillTodoList() {
-        Todo t0 = new Todo(0, "Sleep", "12-12-2020", false);
-        Todo t1 = new Todo(1, "Play", "12-12-2020", false);
-        Todo t2 = new Todo(2, "Read Books", "13-12-2020", false);
-
-        todoList.addAll(Arrays.asList(t0, t1, t2));
+    private void showTodayTodoList() {
+        mAdapter = new TodoAdapter(todoList,  this);
+        recyclerView.setAdapter(mAdapter);
     }
 
     public void swiping(View view){
