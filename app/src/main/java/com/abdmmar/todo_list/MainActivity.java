@@ -64,29 +64,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
         today = calendar.get(Calendar.DAY_OF_WEEK);
         choosenDate = year+"-"+(month+1)+"-"+day;
 
-        switch(today){
-            case Calendar.MONDAY:
-                s_today = "Senin";
-                break;
-            case Calendar.TUESDAY:
-                s_today = "Selasa";
-                break;
-            case Calendar.WEDNESDAY:
-                s_today = "Rabu";
-                break;
-            case Calendar.THURSDAY:
-                s_today = "Kamis";
-                break;
-            case Calendar.FRIDAY:
-                s_today = "Jumat";;
-                break;
-            case Calendar.SATURDAY:
-                s_today = "Sabtu";;
-                break;
-            case Calendar.SUNDAY:
-                s_today = "Ahad";;
-                break;
-        }
+        getDay();
 
         //Set Date
         tv_date.setText(DateFormat
@@ -152,5 +130,31 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
     public void onBackPressed() {
         super.onBackPressed();
         finish();
+    }
+
+    private void getDay() {
+        switch(today){
+            case Calendar.MONDAY:
+                s_today = "Senin";
+                break;
+            case Calendar.TUESDAY:
+                s_today = "Selasa";
+                break;
+            case Calendar.WEDNESDAY:
+                s_today = "Rabu";
+                break;
+            case Calendar.THURSDAY:
+                s_today = "Kamis";
+                break;
+            case Calendar.FRIDAY:
+                s_today = "Jumat";;
+                break;
+            case Calendar.SATURDAY:
+                s_today = "Sabtu";;
+                break;
+            case Calendar.SUNDAY:
+                s_today = "Ahad";;
+                break;
+        }
     }
 }
