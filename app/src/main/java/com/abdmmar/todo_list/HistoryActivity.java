@@ -6,11 +6,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class HistoryActivity extends BaseActivity {
+public class HistoryActivity extends BaseActivity implements EditDialog.EditedTextListener {
     DatabaseHelper databaseHelper;
     private RecyclerView recyclerView;
     private RecyclerView.Adapter mAdapter;
@@ -31,9 +32,13 @@ public class HistoryActivity extends BaseActivity {
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
+        showList();
+        swiping(view);
+    }
+
+    private void showList() {
         mAdapter = new TodoAdapter(historyTodoList,  this);
         recyclerView.setAdapter(mAdapter);
-        swiping(view);
     }
 
     public void swiping(View view){
@@ -52,5 +57,14 @@ public class HistoryActivity extends BaseActivity {
     public void onBackPressed() {
         super.onBackPressed();
         overridePendingTransitionExitSwipeLeft();
+    }
+
+    @Override
+    public void applyTexts(String editedText, int id) {
+        Toast.makeText(this, ""+id, Toast.LENGTH_SHORT).show();
+        Todo historyTodo = new Todo(id, editedText, "", false);
+        databaseHelper.updateTodoItem(historyTodo);
+        mAdapter.notifyItemChanged(3);
+        showList();
     }
 }

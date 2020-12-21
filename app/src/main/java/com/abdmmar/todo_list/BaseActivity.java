@@ -3,7 +3,9 @@ package com.abdmmar.todo_list;
 import android.app.Activity;
 import android.content.Intent;
 
-public class BaseActivity extends Activity {
+import androidx.appcompat.app.AppCompatActivity;
+
+public class BaseActivity extends AppCompatActivity {
     /**
      * Overrides the pending Activity transition by performing the "Enter" animation.
      */
