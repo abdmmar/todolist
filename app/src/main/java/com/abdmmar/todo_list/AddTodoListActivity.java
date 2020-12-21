@@ -52,6 +52,7 @@ public class AddTodoListActivity extends BaseActivity implements View.OnClickLis
 
         //Calendar
         calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_YEAR,1);
         year = calendar.get(Calendar.YEAR);
         month = calendar.get(Calendar.MONTH);
         day = calendar.get(Calendar.DAY_OF_MONTH);
