@@ -1,5 +1,6 @@
 package com.abdmmar.todo_list;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -12,12 +13,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.MyViewHolder> {
+public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.MyViewHolder>{
 
     List<Todo> todoList;
     Context context;
@@ -68,9 +72,10 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.MyViewHolder> 
             public boolean onMenuItemClick(MenuItem item) {
                 databaseHelper = new DatabaseHelper(context,
                         "todolist.db", 1);
+
                 switch (item.getItemId()) {
                     case R.id.item_edit:
-                        Toast.makeText(context, "Edit item with id: " + todoList.get(position).getTodoId(), Toast.LENGTH_SHORT).show();
+                        openDialog(todoList.get(position).getTitle(), todoList.get(position).getTodoId());
                         return true;
                     case R.id.item_delete:
                         isUndeleted = databaseHelper.deleteTodoItem(todoList.get(position));
@@ -90,10 +95,21 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.MyViewHolder> 
         };
     }
 
+    private void openDialog(String textFromItem, int id) {
+        FragmentManager manager = ((AppCompatActivity)context).getSupportFragmentManager();
+        EditDialog editDialog = new EditDialog(textFromItem, id);
+        editDialog.show(manager, "Edit Dialog");
+    }
+
     @Override
     public int getItemCount() {
         return todoList.size();
     }
+
+//    @Override
+//    public void applyTexts(String editedText, int id) {
+//        todoList.get(id).setTitle(editedText);
+//    }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder{
         CheckBox c_item;
