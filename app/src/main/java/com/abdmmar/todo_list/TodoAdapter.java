@@ -1,5 +1,6 @@
 package com.abdmmar.todo_list;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -45,6 +46,15 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.MyViewHolder>{
     @Override
     public void onBindViewHolder(@NonNull final MyViewHolder holder, final int position) {
         holder.c_item.setText(todoList.get(position).getTitle());
+        if (context instanceof HistoryActivity){
+            holder.c_item.setEnabled(false);
+            holder.imgbtn_moreOption.setEnabled(false);
+        }
+
+        if (context instanceof UpcomingActivity || context instanceof HistoryActivity){
+            holder.tv_dateItem.setText(todoList.get(position).getDate());
+        }
+
         holder.imgbtn_moreOption.setOnClickListener(moreOption(position));
     }
 
@@ -113,12 +123,14 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.MyViewHolder>{
 
     public static class MyViewHolder extends RecyclerView.ViewHolder{
         CheckBox c_item;
+        TextView tv_dateItem;
         ImageButton imgbtn_moreOption;
         LinearLayout parentLayout;
 
         public MyViewHolder(@NonNull View itemView){
             super(itemView);
             c_item = itemView.findViewById(R.id.c_item);
+            tv_dateItem = itemView.findViewById(R.id.tv_dateItem);
             imgbtn_moreOption = itemView.findViewById(R.id.imgbtn_moreOption);
             parentLayout = itemView.findViewById(R.id.todo_item_layout);
         }
