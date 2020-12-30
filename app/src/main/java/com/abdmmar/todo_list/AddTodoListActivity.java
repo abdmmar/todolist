@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-public class AddTodoListActivity extends BaseActivity implements View.OnClickListener {
+public class AddTodoListActivity extends BaseActivity implements View.OnClickListener, EditDialog.EditedTextListener {
     private DatePicker datePicker;
     private Calendar calendar;
     private TextView tv_choosen_date;
@@ -146,5 +146,13 @@ public class AddTodoListActivity extends BaseActivity implements View.OnClickLis
                 overridePendingTransitionEnterSwipeRight();
             }
         });
+    }
+
+    @Override
+    public void applyTexts(int position, String editedText, String date, int id, boolean checked) {
+        Todo addTodo = new Todo(id, editedText, date, checked);
+        upcomingTodoList.set(position, addTodo);
+        mAdapter.notifyItemChanged(position);
+        showAddedUpcomingTodoList();
     }
 }

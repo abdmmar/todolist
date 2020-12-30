@@ -11,7 +11,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HistoryActivity extends BaseActivity implements EditDialog.EditedTextListener {
+public class HistoryActivity extends BaseActivity {
     DatabaseHelper databaseHelper;
     private RecyclerView recyclerView;
     private RecyclerView.Adapter mAdapter;
@@ -57,14 +57,5 @@ public class HistoryActivity extends BaseActivity implements EditDialog.EditedTe
     public void onBackPressed() {
         super.onBackPressed();
         overridePendingTransitionExitSwipeLeft();
-    }
-
-    @Override
-    public void applyTexts(String editedText, int id) {
-        Toast.makeText(this, ""+id, Toast.LENGTH_SHORT).show();
-        Todo historyTodo = new Todo(id, editedText, "", false);
-        databaseHelper.updateTodoItem(historyTodo);
-        mAdapter.notifyItemChanged(3);
-        showList();
     }
 }

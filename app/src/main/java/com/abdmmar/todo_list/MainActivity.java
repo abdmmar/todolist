@@ -25,7 +25,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
-public class MainActivity extends BaseActivity implements View.OnClickListener{
+public class MainActivity extends BaseActivity implements View.OnClickListener, EditDialog.EditedTextListener{
 
     private static final String TAG = "Todo List App";
     private RecyclerView recyclerView;
@@ -161,5 +161,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
                 s_today = "Ahad";;
                 break;
         }
+    }
+
+    @Override
+    public void applyTexts(int position, String editedText, String date, int id, boolean checked) {
+        Todo todayTodo = new Todo(id, editedText, date, checked);
+        databaseHelper.updateTodoItem(todayTodo);
+        todoList.set(position, todayTodo);
+        mAdapter.notifyItemChanged(position);
+        showTodayTodoList();
     }
 }

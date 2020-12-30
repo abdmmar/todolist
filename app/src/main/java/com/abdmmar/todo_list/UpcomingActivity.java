@@ -7,11 +7,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class UpcomingActivity extends BaseActivity {
+public class UpcomingActivity extends BaseActivity implements EditDialog.EditedTextListener {
     DatabaseHelper databaseHelper;
     private RecyclerView recyclerView;
     private RecyclerView.Adapter mAdapter;
@@ -32,9 +33,13 @@ public class UpcomingActivity extends BaseActivity {
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
+        showUpcomingTodoList();
+        swiping(view);
+    }
+
+    private void showUpcomingTodoList() {
         mAdapter = new TodoAdapter(upcomingTodoList,  this);
         recyclerView.setAdapter(mAdapter);
-        swiping(view);
     }
 
     public void swiping(View view){
@@ -48,5 +53,14 @@ public class UpcomingActivity extends BaseActivity {
                 onBackPressed();
             }
         });
+    }
+
+    @Override
+    public void applyTexts(int position, String editedText, String date, int id, boolean checked) {
+        Todo upcomingTodo = new Todo(id, editedText, date, checked);
+        databaseHelper.updateTodoItem(upcomingTodo);
+        upcomingTodoList.set(position, upcomingTodo);
+        mAdapter.notifyItemChanged(position);
+        showUpcomingTodoList();
     }
 }

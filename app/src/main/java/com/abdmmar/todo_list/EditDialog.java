@@ -8,10 +8,10 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import androidx.fragment.app.DialogFragment;
 
+import java.util.Date;
 import java.util.Objects;
 
 public class EditDialog extends DialogFragment {
@@ -20,10 +20,16 @@ public class EditDialog extends DialogFragment {
     private String editedText;
     private EditedTextListener listener;
     private EditText et_edit_todo;
+    private boolean checked;
+    private int position;
+    private String date;
 
-    public EditDialog(String text, int id) {
+    public EditDialog(int position, String text, String date, int id, boolean checked) {
+        this.position = position;
         this.text = text;
+        this.date = date;
         this.id = id;
+        this.checked = checked;
     }
 
     @Override
@@ -40,7 +46,7 @@ public class EditDialog extends DialogFragment {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         editedText = et_edit_todo.getText().toString();
-                        listener.applyTexts(editedText, id);
+                        listener.applyTexts(position, editedText, date, id, checked);
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -62,6 +68,6 @@ public class EditDialog extends DialogFragment {
         }
     }
     public interface EditedTextListener {
-        void applyTexts(String editedText, int id);
+        void applyTexts(int position, String editedText, String date, int id, boolean checked);
     }
 }

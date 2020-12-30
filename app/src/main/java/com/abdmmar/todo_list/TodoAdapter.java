@@ -20,6 +20,7 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.Date;
 import java.util.List;
 
 public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.MyViewHolder>{
@@ -106,7 +107,7 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.MyViewHolder>{
 
                 switch (item.getItemId()) {
                     case R.id.item_edit:
-                        openDialog(todoList.get(position).getTitle(), todoList.get(position).getTodoId());
+                        openDialog(position, todoList.get(position).getTitle(), todoList.get(position).getDate(), todoList.get(position).getTodoId(), todoList.get(position).isChecked());
                         return true;
                     case R.id.item_delete:
                         isUndeleted = databaseHelper.deleteTodoItem(todoList.get(position));
@@ -126,9 +127,9 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.MyViewHolder>{
         };
     }
 
-    private void openDialog(String textFromItem, int id) {
+    private void openDialog(int position, String textFromItem, String date, int id, boolean checked) {
         FragmentManager manager = ((AppCompatActivity)context).getSupportFragmentManager();
-        EditDialog editDialog = new EditDialog(textFromItem, id);
+        EditDialog editDialog = new EditDialog(position, textFromItem, date, id, checked);
         editDialog.show(manager, "Edit Dialog");
     }
 
@@ -136,11 +137,6 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.MyViewHolder>{
     public int getItemCount() {
         return todoList.size();
     }
-
-//    @Override
-//    public void applyTexts(String editedText, int id) {
-//        todoList.get(id).setTitle(editedText);
-//    }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder{
         CheckBox c_item;
