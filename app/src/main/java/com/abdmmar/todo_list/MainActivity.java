@@ -98,10 +98,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
             case R.id.imgbtn_addTodoToday:
                 String getTitle = et_addtodo.getText().toString();
 
-                Todo upcomingTodo = new Todo(todoId, getTitle, choosenDate, false);
-                todoList.add(upcomingTodo);
+                Todo todoToday = new Todo(todoId, getTitle, choosenDate, false);
+                todoList.add(todoToday);
                 et_addtodo.setText("");
                 todoId++;
+
+                databaseHelper = new DatabaseHelper(MainActivity.this,
+                        "todolist.db", 1);
+                databaseHelper.addTodo(todoToday);
+
                 showTodayTodoList();
                 break;
         }
