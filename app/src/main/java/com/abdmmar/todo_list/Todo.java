@@ -4,7 +4,7 @@ public class Todo {
     private int todoId;
     private String title;
     private String date;
-    private boolean checked;
+    private boolean checked = false;
 
     public Todo(int todoId, String title, String date, boolean checked) {
         this.todoId = todoId;

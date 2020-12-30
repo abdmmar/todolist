@@ -27,6 +27,7 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.MyViewHolder>{
     List<Todo> todoList;
     Context context;
     private boolean isUndeleted = false;
+    private boolean checked = false;
     DatabaseHelper databaseHelper;
 
     public TodoAdapter(List<Todo> todoList, Context context) {
@@ -46,14 +47,34 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.MyViewHolder>{
     @Override
     public void onBindViewHolder(@NonNull final MyViewHolder holder, final int position) {
         holder.c_item.setText(todoList.get(position).getTitle());
+        holder.c_item.setEnabled(false);
+        holder.c_item.setChecked(todoList.get(position).isChecked());
         if (context instanceof HistoryActivity){
-            holder.c_item.setEnabled(false);
             holder.imgbtn_moreOption.setEnabled(false);
         }
 
         if (context instanceof UpcomingActivity || context instanceof HistoryActivity){
             holder.tv_dateItem.setText(todoList.get(position).getDate());
         }
+
+        if(context instanceof MainActivity){
+            holder.c_item.setEnabled(true);
+        }
+
+        holder.c_item.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                databaseHelper = new DatabaseHelper(context, "todolist.db", 1);
+                if (todoList.get(position).isChecked()){
+                    todoList.get(position).setChecked(false);
+                    checked = databaseHelper.updateTodoItem(todoList.get(position));
+                } else {
+                    todoList.get(position).setChecked(true);
+                    checked = databaseHelper.updateTodoItem(todoList.get(position));
+                }
+                notifyItemChanged(position);
+            }
+        });
 
         holder.imgbtn_moreOption.setOnClickListener(moreOption(position));
     }

@@ -78,6 +78,12 @@ public class DatabaseHelper extends SQLiteOpenHelper implements TodoList{
 
         cv.put(TITLE, todo.getTitle());
 
+        if (todo.isChecked()){
+            cv.put(CHECKED, 1);
+        } else {
+            cv.put(CHECKED, 0);
+        }
+
         int result = db.update(TODOLIST_TABLE, cv, TODOID + " = ?", todoId);
         return result == 1;
     }
