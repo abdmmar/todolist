@@ -38,7 +38,7 @@
             android:id="@+id/v_divider"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginVertical="15dp"
+            android:layout_marginTop="15dp"
             android:background="#E5E5E5" />
 
 <!--        <LinearLayout-->

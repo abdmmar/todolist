@@ -1,29 +1,32 @@
 package com.abdmmar.todo_list;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.graphics.Canvas;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import com.google.android.material.snackbar.Snackbar;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
+
+import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator;
 
 public class MainActivity extends BaseActivity implements View.OnClickListener, EditDialog.EditedTextListener{
 
@@ -43,6 +46,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     List<Todo> todoList = new ArrayList<>();
     DatePickerDialog.OnDateSetListener setDateListener;
     DatabaseHelper databaseHelper;
+    Todo deletedTodo = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +88,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         recyclerView.setLayoutManager(layoutManager);
         showTodayTodoList();
 
+        //Swipe Gesture
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
+        itemTouchHelper.attachToRecyclerView(recyclerView);
+
         swiping(view);
     }
 
@@ -91,6 +99,49 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         mAdapter = new TodoAdapter(todoList,  this);
         recyclerView.setAdapter(mAdapter);
     }
+
+    ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+        @Override
+        public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+            return false;
+        }
+
+        @Override
+        public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+
+            final int position = viewHolder.getAdapterPosition();
+
+            switch (direction){
+                case ItemTouchHelper.LEFT:
+                    deletedTodo = todoList.get(position);
+                    String strDeletedTodo = todoList.get(position).getTitle();
+                    todoList.remove(position);
+                    databaseHelper.deleteTodoItem(deletedTodo);
+                    mAdapter.notifyItemRemoved(position);
+                    Snackbar.make(recyclerView, strDeletedTodo+" deleted", Snackbar.LENGTH_LONG)
+                            .setAction("Undo", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    todoList.add(position, deletedTodo);
+                                    databaseHelper.addTodo(deletedTodo);
+                                    mAdapter.notifyItemInserted(position);
+                                }
+                            }).show();
+                    break;
+            }
+        }
+
+        @Override
+        public void onChildDraw(@NonNull Canvas c, @NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+            new RecyclerViewSwipeDecorator.Builder(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+                    .addSwipeLeftBackgroundColor(ContextCompat.getColor(MainActivity.this, R.color.bgRedDelete))
+                    .addSwipeLeftActionIcon(R.drawable.ic_delete_24)
+                    .create()
+                    .decorate();
+
+            super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+        }
+    };
 
     @Override
     public void onClick(View view) {

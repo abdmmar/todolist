@@ -48,10 +48,10 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.MyViewHolder>{
     @Override
     public void onBindViewHolder(@NonNull final MyViewHolder holder, final int position) {
         holder.c_item.setText(todoList.get(position).getTitle());
-        holder.c_item.setEnabled(false);
         holder.c_item.setChecked(todoList.get(position).isChecked());
-        if (context instanceof HistoryActivity){
-            holder.imgbtn_moreOption.setEnabled(false);
+
+        if (context instanceof  HistoryActivity){
+            holder.c_item.setEnabled(false);
         }
 
         if (context instanceof UpcomingActivity || context instanceof HistoryActivity){
@@ -59,10 +59,26 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.MyViewHolder>{
         }
 
         if(context instanceof MainActivity){
-            holder.c_item.setEnabled(true);
+            holder.c_item.setOnClickListener(clickToCheck(position));
+        } else {
+            holder.c_item.setOnClickListener(null);
         }
 
-        holder.c_item.setOnClickListener(new View.OnClickListener() {
+        holder.c_item.setOnLongClickListener(longClickToEdit(position));
+    }
+
+    private View.OnLongClickListener longClickToEdit(final int position) {
+        return new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                openDialog(position, todoList.get(position).getTitle(), todoList.get(position).getDate(), todoList.get(position).getTodoId(), todoList.get(position).isChecked());
+                return false;
+            }
+        };
+    }
+
+    private View.OnClickListener clickToCheck(final int position) {
+        return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 databaseHelper = new DatabaseHelper(context, "todolist.db", 1);
@@ -74,55 +90,6 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.MyViewHolder>{
                     checked = databaseHelper.updateTodoItem(todoList.get(position));
                 }
                 notifyItemChanged(position);
-            }
-        });
-
-        holder.imgbtn_moreOption.setOnClickListener(moreOption(position));
-    }
-
-    private View.OnClickListener moreOption(final int position) {
-        return new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                //creating a popup menu
-                PopupMenu popup = new PopupMenu(context, view);
-                //inflating menu from xml resource
-                popup.inflate(R.menu.actions);
-                //adding click listener
-                popup.setOnMenuItemClickListener(geItemtListener(position));
-                //displaying the popup
-                popup.show();
-
-            }
-        };
-    }
-
-    private PopupMenu.OnMenuItemClickListener geItemtListener(final int position) {
-        return new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                databaseHelper = new DatabaseHelper(context,
-                        "todolist.db", 1);
-
-                switch (item.getItemId()) {
-                    case R.id.item_edit:
-                        openDialog(position, todoList.get(position).getTitle(), todoList.get(position).getDate(), todoList.get(position).getTodoId(), todoList.get(position).isChecked());
-                        return true;
-                    case R.id.item_delete:
-                        isUndeleted = databaseHelper.deleteTodoItem(todoList.get(position));
-                        if (!isUndeleted){
-                            todoList.remove(todoList.get(position));
-                            notifyItemRemoved(position);
-                            notifyItemRangeChanged(position, todoList.size());
-                            Toast.makeText(context, "Item deleted", Toast.LENGTH_SHORT).show();
-                        } else{
-                            Toast.makeText(context, "Item undeleted", Toast.LENGTH_SHORT).show();
-                        }
-                        return true;
-                    default:
-                        return false;
-                }
             }
         };
     }
@@ -141,14 +108,12 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.MyViewHolder>{
     public static class MyViewHolder extends RecyclerView.ViewHolder{
         CheckBox c_item;
         TextView tv_dateItem;
-        ImageButton imgbtn_moreOption;
         LinearLayout parentLayout;
 
         public MyViewHolder(@NonNull View itemView){
             super(itemView);
             c_item = itemView.findViewById(R.id.c_item);
             tv_dateItem = itemView.findViewById(R.id.tv_dateItem);
-            imgbtn_moreOption = itemView.findViewById(R.id.imgbtn_moreOption);
             parentLayout = itemView.findViewById(R.id.todo_item_layout);
         }
     }

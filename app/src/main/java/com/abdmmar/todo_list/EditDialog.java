@@ -11,7 +11,6 @@ import android.widget.EditText;
 
 import androidx.fragment.app.DialogFragment;
 
-import java.util.Date;
 import java.util.Objects;
 
 public class EditDialog extends DialogFragment {

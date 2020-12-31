@@ -1,16 +1,24 @@
 package com.abdmmar.todo_list;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.graphics.Canvas;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.android.material.snackbar.Snackbar;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator;
 
 public class UpcomingActivity extends BaseActivity implements EditDialog.EditedTextListener {
     DatabaseHelper databaseHelper;
@@ -18,6 +26,7 @@ public class UpcomingActivity extends BaseActivity implements EditDialog.EditedT
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
     List<Todo> upcomingTodoList = new ArrayList<>();
+    Todo deletedTodo = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +43,11 @@ public class UpcomingActivity extends BaseActivity implements EditDialog.EditedT
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         showUpcomingTodoList();
+
+        //Swipe Gesture
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
+        itemTouchHelper.attachToRecyclerView(recyclerView);
+
         swiping(view);
     }
 
@@ -41,6 +55,49 @@ public class UpcomingActivity extends BaseActivity implements EditDialog.EditedT
         mAdapter = new TodoAdapter(upcomingTodoList,  this);
         recyclerView.setAdapter(mAdapter);
     }
+
+    ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+        @Override
+        public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+            return false;
+        }
+
+        @Override
+        public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+
+            final int position = viewHolder.getAdapterPosition();
+
+            switch (direction){
+                case ItemTouchHelper.LEFT:
+                    deletedTodo = upcomingTodoList.get(position);
+                    String strDeletedTodo = upcomingTodoList.get(position).getTitle();
+                    upcomingTodoList.remove(position);
+                    databaseHelper.deleteTodoItem(deletedTodo);
+                    mAdapter.notifyItemRemoved(position);
+                    Snackbar.make(recyclerView, strDeletedTodo+" deleted", Snackbar.LENGTH_LONG)
+                            .setAction("Undo", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    upcomingTodoList.add(position, deletedTodo);
+                                    databaseHelper.addTodo(deletedTodo);
+                                    mAdapter.notifyItemInserted(position);
+                                }
+                            }).show();
+                    break;
+            }
+        }
+
+        @Override
+        public void onChildDraw(@NonNull Canvas c, @NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+            new RecyclerViewSwipeDecorator.Builder(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+                    .addSwipeLeftBackgroundColor(ContextCompat.getColor(UpcomingActivity.this, R.color.bgRedDelete))
+                    .addSwipeLeftActionIcon(R.drawable.ic_delete_24)
+                    .create()
+                    .decorate();
+
+            super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+        }
+    };
 
     public void swiping(View view){
         view.setOnTouchListener(new OnSwipeTouchListener(UpcomingActivity.this) {
