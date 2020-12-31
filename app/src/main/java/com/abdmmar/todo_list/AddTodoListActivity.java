@@ -123,14 +123,12 @@ public class AddTodoListActivity extends BaseActivity implements View.OnClickLis
                     deletedTodo = upcomingTodoList.get(position);
                     String strDeletedTodo = upcomingTodoList.get(position).getTitle();
                     upcomingTodoList.remove(position);
-                    databaseHelper.deleteTodoItem(deletedTodo);
                     mAdapter.notifyItemRemoved(position);
                     Snackbar.make(recyclerView, strDeletedTodo+" deleted", Snackbar.LENGTH_LONG)
                             .setAction("Undo", new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
                                     upcomingTodoList.add(position, deletedTodo);
-                                    databaseHelper.addTodo(deletedTodo);
                                     mAdapter.notifyItemInserted(position);
                                 }
                             }).show();
