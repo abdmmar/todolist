@@ -40,35 +40,6 @@
             android:layout_height="1dp"
             android:layout_marginTop="15dp"
             android:background="#E5E5E5" />
-
-<!--        <LinearLayout-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_gravity="center_vertical"-->
-<!--            android:layout_marginBottom="10dp"-->
-<!--            android:gravity="center_vertical"-->
-<!--            android:orientation="horizontal">-->
-
-<!--            <CheckBox-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_weight="1"-->
-<!--                android:buttonTint="#282828"-->
-<!--                android:checked="false"-->
-<!--                android:text="Pengajuan Tema"-->
-<!--                android:textColor="#282828" />-->
-
-<!--            <ImageButton-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:background="@drawable/ic_more"-->
-<!--                android:contentDescription="More option"-->
-<!--                android:onClick="showPopup"-->
-<!--                android:padding="5dp"-->
-<!--                android:src="@drawable/ic_more" />-->
-
-<!--        </LinearLayout>-->
-
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
