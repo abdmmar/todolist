@@ -66,7 +66,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         month = calendar.get(Calendar.MONTH);
         day = calendar.get(Calendar.DAY_OF_MONTH);
         today = calendar.get(Calendar.DAY_OF_WEEK);
-        choosenDate = year+"-"+(month+1)+"-"+day;
+        setChoosenDate(year, month, day);
 
         getDay();
 
@@ -88,11 +88,27 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         recyclerView.setLayoutManager(layoutManager);
         showTodayTodoList();
 
+        System.out.println(choosenDate);
+
         //Swipe Gesture
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
         itemTouchHelper.attachToRecyclerView(recyclerView);
 
         swiping(view);
+    }
+
+    private void setChoosenDate(int year, int month, int day) {
+        String setMonth = ""+(month+1);
+        String setDay = ""+day;
+        if(month < 10){
+            setMonth = "0"+(month+1);
+        }
+
+        if (day < 10){
+            setDay = "0"+day;
+        }
+
+        choosenDate = year+"-"+setMonth+"-"+setDay;
     }
 
     private void showTodayTodoList() {

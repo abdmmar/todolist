@@ -65,7 +65,9 @@ public class AddTodoListActivity extends BaseActivity implements View.OnClickLis
         year = calendar.get(Calendar.YEAR);
         month = calendar.get(Calendar.MONTH);
         day = calendar.get(Calendar.DAY_OF_MONTH);
-        choosenDate = year+"-"+(month+1)+"-"+day;
+        setChoosenDate(year, month, day);
+
+        System.out.println(choosenDate);
 
         //Set Date
         tv_choosen_date.setText(DateFormat
@@ -85,7 +87,9 @@ public class AddTodoListActivity extends BaseActivity implements View.OnClickLis
                 calendar.set(Calendar.YEAR, year);
                 calendar.set(Calendar.MONTH, month);
                 calendar.set(Calendar.DAY_OF_MONTH, day);
-                choosenDate = year+"-"+(month+1)+"-"+day;
+                setChoosenDate(year, month, day);
+
+                System.out.println(choosenDate);
                 tv_choosen_date.setText(DateFormat.getDateInstance(DateFormat.MEDIUM).format(calendar.getTime()));
             }
         };
@@ -105,6 +109,20 @@ public class AddTodoListActivity extends BaseActivity implements View.OnClickLis
     private void showAddedUpcomingTodoList() {
         mAdapter = new TodoAdapter(upcomingTodoList,  this);
         recyclerView.setAdapter(mAdapter);
+    }
+
+    private void setChoosenDate(int year, int month, int day) {
+        String setMonth = ""+(month+1);
+        String setDay = ""+day;
+        if(month < 10){
+            setMonth = "0"+(month+1);
+        }
+
+        if (day < 10){
+            setDay = "0"+day;
+        }
+
+        choosenDate = year+"-"+setMonth+"-"+setDay;
     }
 
     ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
